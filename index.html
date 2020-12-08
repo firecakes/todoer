@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script src="https://unpkg.com/vue-screen/dist/vue-screen.min.js"></script>
+    <script src="./components/Item.js"></script>
+    <script src="./components/Recipe.js"></script>
+    <script src="./components/Task.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="flex">
+        <button class="third" v-if="$screen.lg == false" @click="switchView('tasks')">Task View</button>
+        <button class="third" v-if="$screen.lg == false" @click="switchView('recipes')">Recipe View</button>
+        <button class="third" v-if="$screen.lg == false" @click="switchView('items')">Item View</button>
+      </div>
+      <div class="flex">
+        <div class="third" v-if="$screen.lg || selectedView === 'tasks'">
+          <div class="header-text"> Tasks </div>
+          <task-form :bus="bus" :id="id"></task-form>
+        </div>
+        <div class="third" v-if="$screen.lg || selectedView === 'recipes'">
+          <div class="header-text"> Recipes </div>
+          <recipe-form :bus="bus" :id="id"></recipe-form>
+        </div>
+        <div class="third" v-if="$screen.lg || selectedView === 'items'">
+          <div class="header-text"> Items </div>
+          <item-form :bus="bus" :id="id"></item-form>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      bus: new Vue(),
+      id: '',
+      selectedView: 'tasks'
+    },
+    created () {
+      let uri = window.location.search.substring(1); 
+      let params = new URLSearchParams(uri);
+      this.id = params.get("id");
+    },
+    mounted () {
+      this.bus.$on('trigger', () => {
+        this.bus.$emit('update');
+      });
+    },
+    methods: {
+      switchView (view) {
+        this.selectedView = view;
+      }
+    }
+  });
+  </script>
+
+  <style>
+    #app {
+      display: flex;
+      flex-direction: column;
+    }
+    .flex {
+      display: flex;
+    }
+    .third {
+      display: flex;
+      flex-grow: 1;
+      flex-basis: 0;
+      flex-direction: column;
+    }
+    .header-text {
+      display: flex;
+      justify-content: center;
+      border-style: solid;
+      border-width: 1px;
+    }
+    .text-form {
+      display: inline-block;
+    }
+    .short-width {
+      width: 60px;
+    }
+    .progress-bar-back {
+      flex-grow: 1;
+      background-color: #a84835;
+      height: 5px;
+    }
+    .progress-bar-front {
+      flex-grow: 1;
+      background-color: #e8db33;
+      height: 5px;
+    }
+    .input-name-div {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+      padding-left: 5px;
+      padding-right: 20px;
+    }
+    .input-name {
+      flex-grow: 1;
+    }
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    ul, li {
+      margin: 0px;
+    }
+  </style>
+</html>
