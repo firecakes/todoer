@@ -1,8 +1,7 @@
 ## Todoer
 An advanced task tracker program.
 
-[]("https://github.com/firecakes/todoer/blob/main/screen-1.png")
-[]("https://github.com/firecakes/todoer/blob/main/screen-2.png")
+Check the two images provided in the repository for what the website looks like (on PC and on a phone)
 
 ### Features
  * Specify a name for your task and when you want it completed, then add it to your list of tasks, ordered by due date!
