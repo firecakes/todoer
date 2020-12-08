@@ -1,6 +1,9 @@
 ## Todoer
 An advanced task tracker program.
 
+[]("https://github.com/firecakes/todoer/blob/main/screen-1.png")
+[]("https://github.com/firecakes/todoer/blob/main/screen-2.png")
+
 ### Features
  * Specify a name for your task and when you want it completed, then add it to your list of tasks, ordered by due date!
  * You can make a task cyclic, so that they are daily, weekly, yearly, or anything else! The task will stay in your list for the next cycle once completed.
