@@ -17,6 +17,7 @@ Vue.component('recipe-form', {
             <th>Name</th>
             <th>Label</th>
             <th>Amount</th>
+            <th>Unit</th>
             <th>Include in Recipe</th>
           </tr>
         </thead>
@@ -24,7 +25,8 @@ Vue.component('recipe-form', {
           <tr v-for="i in sortedRecipeForm">
             <th>{{ i.name }}</th>
             <th>{{ i.label }}</th>
-            <th><input type="number" v-model="i.amount"></th>
+            <th><input style="width:40px" type="number" v-model="i.amount"></th>
+            <th><input style="width:70px" type="string" v-model="i.unit"></th>
             <th><input type="checkbox" v-model="i.selected"></th>
           </tr>
         </tbody>
@@ -102,6 +104,7 @@ Vue.component('recipe-form', {
           label: i.label,
           checked: i.checked,
           amount: 0,
+          unit: i.unit,
           selected: false
         }));        
       });
@@ -118,6 +121,7 @@ Vue.component('recipe-form', {
         if (!item) return;
         item.amount = r.amount;
         item.selected = r.selected;
+        item.unit = r.unit;
       });
     },
     deleteData (input) {

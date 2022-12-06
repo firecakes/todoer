@@ -100,7 +100,7 @@ app
     .use(apiRouter.allowedMethods());
 
 app.listen(process.env.PORT || 3000, () => {
-    console.log("Server started");
+    console.log("Server started on port " + (process.env.PORT || 3000));
 });
 
 const db = new JsonDB(new Config("database", true, true, '/'));
