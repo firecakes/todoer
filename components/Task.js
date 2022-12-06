@@ -109,7 +109,7 @@ Vue.component('task-form', {
           {{ index }}
           <ul>
             <li v-for="(subitem, subindex) in item" :key="subindex">
-              {{ subindex }}{{ subitem.lasting ? '?' : ''}} ({{ subitem.amount }})
+              {{ subindex }}{{ subitem.lasting ? '?' : ''}} ({{ Object.entries(subitem.amounts).map(([unit, val]) => val + " " + unit).join(", ") }})
             </li>
           </ul>
         </div>
@@ -177,11 +177,14 @@ Vue.component('task-form', {
           }
           if (!items[item.label][item.name]) {
             items[item.label][item.name] = {
-              amount: 0,
+              amounts: {},
               lasting: false
             };
           }
-          items[item.label][item.name].amount += item.amount;
+          if (!items[item.label][item.name].amounts[item.unit]) {
+            items[item.label][item.name].amounts[item.unit] = 0;
+          }
+          items[item.label][item.name].amounts[item.unit] += item.amount;
           items[item.label][item.name].lasting = item.checked;
         });
       });
