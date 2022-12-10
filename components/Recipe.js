@@ -142,9 +142,16 @@ Vue.component('recipe-form', {
         type: 'recipes',
         id: this.id,
         data: {
-          name: this.name,
-          label: this.label,
-          recipeForm: this.recipeForm.filter(r => r.selected),
+          name: this.name.trim(),
+          label: this.label.trim(),
+          recipeForm: this.recipeForm.filter(r => r.selected).map(r => ({
+            name: r.name,
+            label: r.label,
+            checked: r.checked,
+            amount: r.amount,
+            unit: (typeof r.unit === 'string') ? r.unit.trim() : '',
+            selected: r.selected
+          })),
         }
       };
       data.data.recipeForm.forEach(r => {

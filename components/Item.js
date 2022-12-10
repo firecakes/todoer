@@ -88,8 +88,8 @@ Vue.component('item-form', {
         type: 'items',
         id: this.id,
         data: {
-          name: this.name,
-          label: this.label,
+          name: this.name.trim(),
+          label: this.label.trim(),
           checked: this.checked,
         }
       };

@@ -109,7 +109,7 @@ Vue.component('task-form', {
           {{ index }}
           <ul>
             <li v-for="(subitem, subindex) in item" :key="subindex">
-              {{ subindex }}{{ subitem.lasting ? '?' : ''}} ({{ Object.entries(subitem.amounts).map(([unit, val]) => val + " " + unit).join(", ") }})
+              {{ subindex }}{{ subitem.lasting ? '?' : ''}} ({{ Object.entries(subitem.amounts).map(([unit, val]) => (unit !== '') ? (val + " " + unit) : val ).join(", ") }})
             </li>
           </ul>
         </div>
@@ -269,8 +269,8 @@ Vue.component('task-form', {
           startDate: new Date().toUTCString(),
           dueDate: new Date(this.dueDate.year, this.dueDate.month - 1, this.dueDate.day, this.dueDate.hour, this.dueDate.minute, this.dueDate.second).toUTCString(),
           recipes: this.sortedRecipes.filter(r => r.selected).map(r => ({
-            name: r.name,
-            label: r.label
+            name: r.name.trim(),
+            label: r.label.trim()
           })),
         }
       };
