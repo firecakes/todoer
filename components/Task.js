@@ -105,11 +105,13 @@ Vue.component('task-form', {
         </div>
 
         <i v-if="task.recipes.length > 0">From {{ task.recipes.map(r => r.name).join(', ') }}:</i>
-        <div v-for="(item, index) in calculateItemSums(task.recipes)" :key="index">
+        <div v-for="(item, index) in task.itemSums" :key="index">
           {{ index }}
           <ul>
             <li v-for="(subitem, subindex) in item" :key="subindex">
-              {{ subindex }}{{ subitem.lasting ? '?' : ''}} ({{ Object.entries(subitem.amounts).map(([unit, val]) => (unit !== '') ? (val + " " + unit) : val ).join(", ") }})
+              <div v-if="!subitem.isComplete" style="display: inline-block">{{ subindex }}{{ subitem.lasting ? '?' : ''}} ({{ Object.entries(subitem.amounts).map(([unit, val]) => (unit !== '') ? (val + " " + unit) : val ).join(", ") }})</div>
+              <s v-if="subitem.isComplete" style="display: inline-block">{{ subindex }}{{ subitem.lasting ? '?' : ''}} ({{ Object.entries(subitem.amounts).map(([unit, val]) => (unit !== '') ? (val + " " + unit) : val ).join(", ") }})</s>
+              <input style="float: right; margin: 0px; margin-right: 20px" type="checkbox" v-model="subitem.isComplete" @change="saveTask(task)"></input>
             </li>
           </ul>
         </div>
@@ -163,7 +165,19 @@ Vue.component('task-form', {
     }, 1000);
   },
   methods: {
-    calculateItemSums (recipes) {
+    saveTask (task) {
+      const data = {
+        action: 'edit',
+        type: 'tasks',
+        id: this.id,
+        data: task
+      };
+      this.$http.post('/api/data', data).then(response => {
+        this.items = response.body;
+        this.bus.$emit('trigger');
+      });
+    },
+    generateItemSums (recipes) {
       const items = {};
 
       recipes.forEach(recipe => {
@@ -186,9 +200,9 @@ Vue.component('task-form', {
           }
           items[item.label][item.name].amounts[item.unit] += item.amount;
           items[item.label][item.name].lasting = item.checked;
+          items[item.label][item.name].isComplete = false;
         });
       });
-
       return items;
     },
     padTime (time) {
@@ -225,6 +239,9 @@ Vue.component('task-form', {
         for (let task of response.body) {
           task.dueDate = new Date(task.dueDate);
           task.startDate = new Date(task.startDate);
+          if (!task.itemSums) { // if the database doesn't have this, generate it
+            task.itemSums = this.generateItemSums(task.recipes)
+          }
         }
         this.tasks = response.body;
       });
@@ -260,6 +277,11 @@ Vue.component('task-form', {
       });
     },
     submitData () {
+      let selectedRecipes = this.sortedRecipes.filter(r => r.selected).map(r => ({
+        name: r.name.trim(),
+        label: r.label.trim(),
+      }));
+
       const data = {
         action: 'add',
         type: 'tasks',
@@ -268,10 +290,8 @@ Vue.component('task-form', {
           name: this.name,
           startDate: new Date().toUTCString(),
           dueDate: new Date(this.dueDate.year, this.dueDate.month - 1, this.dueDate.day, this.dueDate.hour, this.dueDate.minute, this.dueDate.second).toUTCString(),
-          recipes: this.sortedRecipes.filter(r => r.selected).map(r => ({
-            name: r.name.trim(),
-            label: r.label.trim()
-          })),
+          recipes: selectedRecipes,
+          itemSums: this.generateItemSums(selectedRecipes),
         }
       };
       for (let key in this.cyclicDate) {
